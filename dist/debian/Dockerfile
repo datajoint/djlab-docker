@@ -4,12 +4,12 @@ from raphaelguzman/djbase:py${PY_VER}-debian as jup_build
 USER dja:anaconda
 
 RUN \
+    umask u+rwx,g+rwx && \
     export PY_VER=$(python -c "import sys;print(sys.version)" | head -1 | awk '{print $1}') && \
     # conda install -yc conda-forge python=$PY_VER jupyterlab && \
     pip install --no-cache-dir jupyterlab && \
     conda clean -ya && \
-    chmod -R o+w /home/dja/.cache && \
-    find /opt/conda -user 3000 -exec chmod g+w "{}" \;
+    chmod -R o+w /home/dja/.cache
 COPY ./config/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
 
 # #Squashed Final Image
