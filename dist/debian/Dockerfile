@@ -16,7 +16,7 @@ COPY ./config/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
 FROM scratch
 COPY --from=jup_build / /
 ENV PYTHON_USER dja
-RUN chmod 4755 /startup && /startup $(id dja -u) $(id dja -g)
+RUN chmod 4755 /startup && /startup -user=dja
 LABEL maintainerName="Raphael Guzman" \
       maintainerEmail="raphael@vathes.com" \
       maintainerCompany="DataJoint"
