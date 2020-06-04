@@ -1,9 +1,11 @@
 # Configuration file for ipython-notebook.
-from os import getenv
+from os import getenv, getuid
+from pwd import getpwall
 from IPython.lib import passwd
 
-c = get_config()
 
+user = [u for u in getpwall() if u.pw_uid == getuid()][0]
+c = get_config()
 
 #------------------------------------------------------------------------------
 # NotebookApp configuration
@@ -25,6 +27,8 @@ c.NotebookApp.port = 8888
 
 c.NotebookApp.default_url = '/lab'
 
-c.NotebookApp.notebook_dir = '/home/dja'
+c.NotebookApp.notebook_dir = user.pw_dir
 
-c.FileContentsManager.root_dir = '/home/dja'
+c.NotebookApp.terminado_settings = { 'shell_command': [user.pw_shell, '-l'] }
+
+c.FileContentsManager.root_dir = '/home'
