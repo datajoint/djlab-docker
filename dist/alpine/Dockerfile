@@ -28,8 +28,8 @@ ENV PIP_REQUIREMENTS /pip_requirements.txt
 ENV CONDA_REQUIREMENTS /conda_requirements.txt
 ENV PATH "/home/dja/.local/bin:/opt/conda/bin:$PATH"
 ENTRYPOINT ["/entrypoint.sh"]
-WORKDIR /src
-VOLUME /src
+WORKDIR /home/dja
+VOLUME /home/dja
 VOLUME /tmp/.X11-unix
 EXPOSE 8888
 CMD ["jupyter", "lab"]
