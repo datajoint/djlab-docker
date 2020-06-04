@@ -4,7 +4,7 @@ from raphaelguzman/djbase:py${PY_VER}-alpine as jup_build
 USER dja:anaconda
 
 RUN \
-    umask u+rwx,g+rwx && \
+    umask u+rwx,g+rwx,o-rwx && \
     export PY_VER=$(python -c "import sys;print(sys.version)" | head -1 | awk '{print $1}') && \
     # conda install -yc conda-forge python=$PY_VER jupyterlab && \
     pip install --no-cache-dir jupyterlab && \
@@ -15,7 +15,6 @@ COPY ./config/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
 # #Squashed Final Image
 FROM scratch
 COPY --from=jup_build / /
-ENV PYTHON_USER dja
 RUN chmod 4755 /startup && /startup -user=dja
 LABEL maintainerName="Raphael Guzman" \
       maintainerEmail="raphael@vathes.com" \
