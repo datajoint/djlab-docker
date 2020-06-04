@@ -9,6 +9,7 @@ RUN \
     # conda install -yc conda-forge python=$PY_VER jupyterlab && \
     pip install --no-cache-dir jupyterlab && \
     conda clean -ya && \
+    find /opt/conda/conda-meta -user dja -exec chmod u+rwx,g+rwx,o-rwx "{}" \; && \
     chmod -R o+w /home/dja/.cache
 COPY ./config/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
 
