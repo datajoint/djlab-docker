@@ -6,7 +6,7 @@ services:
       dockerfile: ./dist/alpine/Dockerfile
       args:
         - PY_VER
-    image: raphaelguzman/djlab:py${PY_VER}-alpine
+    image: datajoint/djlab:py${PY_VER}-alpine
     environment:
       - DISPLAY                             # Necessary to allow GUI to route to Docker host
       - JUPYTER_PASSWORD=secret          # Jupyter Notebook login password

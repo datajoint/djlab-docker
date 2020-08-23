@@ -1,6 +1,8 @@
-# Base DataJoint JupyterLab Image
+# DJLab
 
-## Launch locally
+A docker image optimized for running a JupyterLab environment with DataJoint.
+
+# Launch locally
 
 
 `docker-compose -f dist/alpine/docker-compose.yml --env-file config/.env up --build`
@@ -8,6 +10,6 @@ OR
 `docker-compose -f dist/debian/docker-compose.yml --env-file config/.env up --build`
 
 
-## Notes
+# Notes
 
-https://hub.docker.com/r/raphaelguzman/djlab
+https://hub.docker.com/r/datajoint/djlab
