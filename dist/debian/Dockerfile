@@ -1,6 +1,6 @@
 ARG PY_VER
 
-from raphaelguzman/djbase:py${PY_VER}-debian as jup_build
+FROM datajoint/djbase:py${PY_VER}-debian as jup_build
 USER dja:anaconda
 
 RUN \
