@@ -6,6 +6,7 @@ env:
     - DOCKER_CLIENT_TIMEOUT="120"
     - COMPOSE_HTTP_TIMEOUT="120"
     - UID="2000"
+    - BASE_IMAGE_HASH="1aa1f15"
 services:
 - docker
 push: &push
@@ -35,7 +36,7 @@ alpine: &alpine
       script:
         - docker-compose -f $COMPOSE_FILE build
         - docker system prune -f
-        - docker rmi datajoint/djbase:py${PY_VER}-alpine
+        - docker rmi datajoint/djbase:py${PY_VER}-alpine-${BASE_IMAGE_HASH}
         - IMAGE=$(docker images | tail -1 | awk '{print $1}')
         - TAG=$(docker images | tail -1 | awk '{print $2}')
         - docker tag ${IMAGE}:${TAG} ${IMAGE}:${TAG}-${TRAVIS_COMMIT:0:7}
@@ -47,7 +48,7 @@ debian: &debian
       script:
         - docker-compose -f $COMPOSE_FILE build
         - docker system prune -f
-        - docker rmi datajoint/djbase:py${PY_VER}-debian
+        - docker rmi datajoint/djbase:py${PY_VER}-debian-${BASE_IMAGE_HASH}
         - IMAGE=$(docker images | tail -1 | awk '{print $1}')
         - TAG=$(docker images | tail -1 | awk '{print $2}')
         - docker tag ${IMAGE}:${TAG} ${IMAGE}:${TAG}-${TRAVIS_COMMIT:0:7}

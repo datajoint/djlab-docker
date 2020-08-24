@@ -16,7 +16,7 @@ fi
 
 #Install Python dependencies
 if [ -f "$PIP_REQUIREMENTS" ]; then
-    pip install -r $PIP_REQUIREMENTS --upgrade
+    pip install -r $PIP_REQUIREMENTS --upgrade --no-cache-dir
 fi
 
 #Update djlab config based on env vars
