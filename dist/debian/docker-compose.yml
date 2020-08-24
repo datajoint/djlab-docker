@@ -5,6 +5,7 @@ services:
       context: ../..
       dockerfile: ./dist/debian/Dockerfile
       args:
+        - BASE_IMAGE_HASH
         - PY_VER
     image: datajoint/djlab:py${PY_VER}-debian
     environment:

@@ -1,6 +1,7 @@
+ARG BASE_IMAGE_HASH
 ARG PY_VER
 
-FROM datajoint/djbase:py${PY_VER}-debian as jup_build
+FROM datajoint/djbase:py${PY_VER}-debian-${BASE_IMAGE_HASH} as jup_build
 USER dja:anaconda
 
 

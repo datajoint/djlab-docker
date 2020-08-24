@@ -6,6 +6,7 @@ env:
     - DOCKER_CLIENT_TIMEOUT="120"
     - COMPOSE_HTTP_TIMEOUT="120"
     - UID="2000"
+    - BASE_IMAGE_HASH="1aa1f15"
 services:
 - docker
 push: &push
