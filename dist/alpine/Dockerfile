@@ -4,11 +4,10 @@ ARG PY_VER
 FROM datajoint/djbase:py${PY_VER}-alpine-${BASE_IMAGE_HASH} as jup_build
 USER dja:anaconda
 
-ENV APK_REQUIREMENTS /tmp/apk_requirements.txt
-ENV PIP_REQUIREMENTS /tmp/pip_requirements.txt
+ENV DJLAB_CONFIG /tmp/djlab_config.yaml
 COPY --chown=dja:anaconda ./dist/alpine/apk_requirements.txt \
-    ./config/pip_requirements.txt /tmp/
-COPY --chown=dja:anaconda ./utilities/djlab.py ./utilities/setup.py /src/
+    ./config/pip_requirements.txt ./config/djlab_config.yaml /tmp/
+COPY --chown=dja:anaconda ./utilities/djlab.py ./utilities/setup.py /main/
 COPY ./utilities/entrypoint.sh /entrypoint.sh
 RUN \
     umask u+rwx,g+rwx,o-rwx && \
@@ -18,15 +17,13 @@ RUN \
     /entrypoint.sh echo "Requirements updated..." && \
     rm $APK_REQUIREMENTS && \
     rm $PIP_REQUIREMENTS && \
-    pip install /src && \
-    rm /src/* && \
+    pip install /main && \
+    rm /main/* && \
     conda clean -ya && \
     find /opt/conda/conda-meta -user dja -exec chmod u+rwx,g+rwx,o-rwx "{}" \; && \
     chmod -R o+w /home/dja/.cache
-ENV DJLAB_CONFIG /tmp/djlab_config.yaml
 COPY --chown=dja:anaconda ./config/jupyter_notebook_config.py /etc/jupyter/
 COPY --chown=dja:anaconda ./config/ipython_config.py /etc/ipython/
-COPY --chown=dja:anaconda ./config/djlab_config.yaml /tmp/
 
 # #Squashed Final Image
 FROM scratch
@@ -40,7 +37,7 @@ ENV HOME /home/dja
 ENV LANG C.UTF-8
 ENV APK_REQUIREMENTS /tmp/apk_requirements.txt
 ENV PIP_REQUIREMENTS /tmp/pip_requirements.txt
-ENV CONDA_REQUIREMENTS /conda_requirements.txt
+ENV CONDA_REQUIREMENTS /tmp/conda_requirements.txt
 ENV DJLAB_CONFIG /tmp/djlab_config.yaml
 ENV PATH "/home/dja/.local/bin:/opt/conda/bin:$PATH"
 ENTRYPOINT ["/entrypoint.sh"]

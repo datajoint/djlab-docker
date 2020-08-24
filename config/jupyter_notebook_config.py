@@ -37,10 +37,11 @@ c.NotebookApp.terminado_settings = { 'shell_command': [user.pw_shell, '-l'] }
 
 c.FileContentsManager.root_dir = '/home'
 
-# you may also use a query param ?file-browser-path= to modify tree navigation on left
-c.NotebookApp.default_url = ('/lab' if get_djlab_config(
+# you may also use a query param to modify tree navigation on left
+# e.g. localhost:8888/lab/workspaces/main/tree/dja/hi.md?file-browser-path=/dja
+c.NotebookApp.default_url = ('/lab/workspaces/main' if get_djlab_config(
                                 'djlab.jupyter_notebook.display_filepath') == 'NULL'
-                             else '/lab/tree{}'.format(
+                             else '/lab/workspaces/main/tree{}'.format(
                                 get_djlab_config(
                                     'djlab.jupyter_notebook.display_filepath').replace(
                                         c.FileContentsManager.root_dir, '')))
