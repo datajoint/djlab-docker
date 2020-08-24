@@ -3,15 +3,30 @@ ARG PY_VER
 FROM datajoint/djbase:py${PY_VER}-debian as jup_build
 USER dja:anaconda
 
+
+ENV APT_REQUIREMENTS /tmp/apt_requirements.txt
+ENV PIP_REQUIREMENTS /tmp/pip_requirements.txt
+COPY --chown=dja:anaconda ./dist/debian/apt_requirements.txt \
+    ./config/pip_requirements.txt /tmp/
+COPY --chown=dja:anaconda ./utilities/djlab.py ./utilities/setup.py /src/
 RUN \
     umask u+rwx,g+rwx,o-rwx && \
-    export PY_VER=$(python -c "import sys;print(sys.version)" | head -1 | awk '{print $1}') && \
+    export PY_VER=$(python -c "import sys;print(sys.version)" | \
+        head -1 | awk '{print $1}') && \
     # conda install -yc conda-forge python=$PY_VER jupyterlab && \
-    pip install --no-cache-dir jupyterlab && \
+    /entrypoint.sh echo "Requirements updated..." && \
+    rm $APT_REQUIREMENTS && \
+    rm $PIP_REQUIREMENTS && \
+    pip install /src && \
+    rm /src/* && \
     conda clean -ya && \
     find /opt/conda/conda-meta -user dja -exec chmod u+rwx,g+rwx,o-rwx "{}" \; && \
     chmod -R o+w /home/dja/.cache
-COPY ./config/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
+ENV DJLAB_CONFIG /tmp/djlab_config.yaml
+COPY --chown=dja:anaconda ./config/jupyter_notebook_config.py /etc/jupyter/
+COPY --chown=dja:anaconda ./config/ipython_config.py /etc/ipython/
+COPY --chown=dja:anaconda ./config/djlab_config.yaml /tmp/
+COPY ./utilities/entrypoint.sh /entrypoint.sh
 
 # #Squashed Final Image
 FROM scratch
@@ -23,9 +38,10 @@ LABEL maintainerName="Raphael Guzman" \
 USER dja:anaconda
 ENV HOME /home/dja
 ENV LANG C.UTF-8
-ENV APT_REQUIREMENTS /apt_requirements.txt
-ENV PIP_REQUIREMENTS /pip_requirements.txt
+ENV APT_REQUIREMENTS /tmp/apt_requirements.txt
+ENV PIP_REQUIREMENTS /tmp/pip_requirements.txt
 ENV CONDA_REQUIREMENTS /conda_requirements.txt
+ENV DJLAB_CONFIG /tmp/djlab_config.yaml
 ENV PATH "/home/dja/.local/bin:/opt/conda/bin:$PATH"
 ENTRYPOINT ["/entrypoint.sh"]
 WORKDIR /home/dja
