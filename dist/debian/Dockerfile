@@ -10,6 +10,7 @@ ENV PIP_REQUIREMENTS /tmp/pip_requirements.txt
 COPY --chown=dja:anaconda ./dist/debian/apt_requirements.txt \
     ./config/pip_requirements.txt /tmp/
 COPY --chown=dja:anaconda ./utilities/djlab.py ./utilities/setup.py /src/
+COPY ./utilities/entrypoint.sh /entrypoint.sh
 RUN \
     umask u+rwx,g+rwx,o-rwx && \
     export PY_VER=$(python -c "import sys;print(sys.version)" | \
@@ -27,7 +28,6 @@ ENV DJLAB_CONFIG /tmp/djlab_config.yaml
 COPY --chown=dja:anaconda ./config/jupyter_notebook_config.py /etc/jupyter/
 COPY --chown=dja:anaconda ./config/ipython_config.py /etc/ipython/
 COPY --chown=dja:anaconda ./config/djlab_config.yaml /tmp/
-COPY ./utilities/entrypoint.sh /entrypoint.sh
 
 # #Squashed Final Image
 FROM scratch
