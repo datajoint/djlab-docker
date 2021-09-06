@@ -20,6 +20,15 @@ assert ()
 	fi
 }
 validate () {
+	SHELL_CMD_FLAGS="-e Djlab_JupyterServer_DisplayFilepath=/home/anaconda/README.md"
+	SHELL_CMD=$(eval "echo \"$SHELL_CMD_TEMPLATE\"")
+	assert "check landing page" "$($SHELL_CMD 'eval "$(cat)"' <<-END
+		jupyter lab > /tmp/logs 2>&1 & \
+		sleep 1 && \
+		cat /tmp/logs | \
+		grep -q "http://127.0.0.1:8888/lab/tree/anaconda/README.mdr"
+	END
+	)" $LINENO
 	assert "debugger available" "$SHELL_CMD \
 		'pip list --format=freeze 2>/dev/null | grep -qv "ipykernel==5\."'" $LINENO
 	assert "get djlab default password with magic" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END

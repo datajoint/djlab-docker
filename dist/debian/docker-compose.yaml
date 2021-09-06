@@ -19,8 +19,9 @@ services:
     #   - bash
     #   - -c
     #   - |
-    #     jupyter lab --LabApp.default_url='/lab/tree/anaconda/README.md'
-    #     tail -f /dev/null
+    #     jupyter lab > /tmp/logs 2>&1 &
+    #     sleep 1
+    #     cat /tmp/logs | grep -q "http://127.0.0.1:8888/lab/tree/anaconda/README.mdr"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw      # Necessary to allow GUI to route to Docker host
       - /github/datajoint-python/README.md:/home/anaconda/README.md
