@@ -20,16 +20,19 @@ assert ()
 	fi
 }
 validate () {
-	assert "get djlab default password" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
-		python -c 'print(__import__("djlab").get_djlab_config(\
-			"djlab.jupyter_server.password"))'
+	assert "debugger available" "grep -qv 'ipykernel==5\.' <<< \
+		$($SHELL_CMD 'eval "$(cat)"' <<-END
+			pip list --format=freeze 2>/dev/null
+		END
+		)" $LINENO
+	assert "get djlab default password with magic" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+		ipython -c "%djlab djlab.jupyter_server.password"
 	END
 	) == 'datajoint' ]" $LINENO
 	SHELL_CMD_FLAGS="-e Djlab_JupyterServer_Password=test"
 	SHELL_CMD=$(eval "echo \"$SHELL_CMD_TEMPLATE\"")
 	assert "get djlab changed password" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
-		python -c 'print(__import__("djlab").get_djlab_config(\
-			"djlab.jupyter_server.password"))'
+		ipython -c "%djlab djlab.jupyter_server.password"
 	END
 	) == 'test' ]" $LINENO
 }
