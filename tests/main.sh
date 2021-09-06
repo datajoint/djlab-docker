@@ -27,7 +27,7 @@ validate () {
 			jupyter lab > /tmp/logs 2>&1 & \
 			sleep 1 && \
 			cat /tmp/logs | \
-			grep -q "http://127.0.0.1:8888/lab/tree/anaconda/README.mdr" && \
+			grep -q "http://127.0.0.1:8888/lab/tree/anaconda/README.md" && \
 			echo done
 		END
 		)" $LINENO
