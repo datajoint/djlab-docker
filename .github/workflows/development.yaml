@@ -27,24 +27,29 @@ jobs:
     env:
       DISTRO: ${{matrix.distro}}
       PY_VER: ${{matrix.py_ver}}
+      PLATFORM: linux/amd64
       DOCKER_CLIENT_TIMEOUT: "120"
       COMPOSE_HTTP_TIMEOUT: "120"
       BASE_IMAGE_HASH: "534f4bc"
     steps:
       - uses: actions/checkout@v2
+      - name: Determine platform tag
+        run: |
+          PLATFORM_TAG=$(echo "$PLATFORM" | tr '/' '_')
+          echo "PLATFORM_TAG=${PLATFORM_TAG}" >> $GITHUB_ENV
       - name: Compile image
         run: |
           docker buildx bake -f dist/${DISTRO}/docker-compose.yaml \
-              --set *.platform=linux/amd64 --set *.context=. --load
+              --set *.platform=${PLATFORM} --set *.context=. --load
           REF=$(eval "echo $(cat dist/${DISTRO}/docker-compose.yaml | grep 'image:' | \
               awk '{print $2}')")
-          docker save "${REF}" | gzip > "py${PY_VER}-${DISTRO}.tar.gz"
+          docker save "${REF}" | gzip > "py${PY_VER}-${DISTRO}-${PLATFORM_TAG}.tar.gz"
       - name: Add image artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{format('py{0}-{1}', matrix.py_ver, matrix.distro)}}
+          name: ${{format('py{0}-{1}-{2}', matrix.py_ver, matrix.distro, env.PLATFORM_TAG)}}
           path: >
-            ${{format('py{0}-{1}.tar.gz', matrix.py_ver, matrix.distro)}}
+            ${{format('py{0}-{1}-{2}.tar.gz', matrix.py_ver, matrix.distro, env.PLATFORM_TAG)}}
           retention-days: 1
   test:
     needs: build
@@ -71,15 +76,20 @@ jobs:
     env:
       DISTRO: ${{matrix.distro}}
       PY_VER: ${{matrix.py_ver}}
+      PLATFORM: linux/amd64
     steps:
       - uses: actions/checkout@v2
+      - name: Determine platform tag
+        run: |
+          PLATFORM_TAG=$(echo "$PLATFORM" | tr '/' '_')
+          echo "PLATFORM_TAG=${PLATFORM_TAG}" >> $GITHUB_ENV
       - name: Fetch image artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{format('py{0}-{1}', matrix.py_ver, matrix.distro)}}
+          name: ${{format('py{0}-{1}-{2}', matrix.py_ver, matrix.distro, env.PLATFORM_TAG)}}
       - name: Run integration tests
         run: |
-          docker load < "py${PY_VER}-${DISTRO}.tar.gz"
+          docker load < "py${PY_VER}-${DISTRO}-${PLATFORM_TAG}.tar.gz"
           tests/main.sh
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -107,18 +117,23 @@ jobs:
     env:
       DISTRO: ${{matrix.distro}}
       PY_VER: ${{matrix.py_ver}}
+      PLATFORM: linux/amd64
       DOCKER_USERNAME: ${{secrets.docker_username}}
       DOCKER_PASSWORD: ${{secrets.docker_password}}
     steps:
       - uses: actions/checkout@v2
+      - name: Determine platform tag
+        run: |
+          PLATFORM_TAG=$(echo "$PLATFORM" | tr '/' '_')
+          echo "PLATFORM_TAG=${PLATFORM_TAG}" >> $GITHUB_ENV
       - name: Fetch image artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{format('py{0}-{1}', matrix.py_ver, matrix.distro)}}
+          name: ${{format('py{0}-{1}-{2}', matrix.py_ver, matrix.distro, env.PLATFORM_TAG)}}
       - name: Publish image
         run: |
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-          docker load < "py${PY_VER}-${DISTRO}.tar.gz"
+          docker load < "py${PY_VER}-${DISTRO}-${PLATFORM_TAG}.tar.gz"
           REF=$(eval "echo $(cat dist/${DISTRO}/docker-compose.yaml | grep 'image:' | \
               awk '{print $2}')")
           TAG=$(echo $REF | awk -F':' '{print $2}')

@@ -10,8 +10,9 @@ assert ()
 	fi
 
 	lineno=$3
+	# echo "$2"
 	if ! eval "$2"; then
-		echo "Assertion failed:  \"$2\""
+		echo "Assertion ($1) failed:  \"$2\""
 		echo "File \"$0\", line $lineno"
 		exit $E_ASSERT_FAILED
 	else
@@ -20,19 +21,23 @@ assert ()
 	fi
 }
 validate () {
+	assert "debugger available" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+		pip list --format=freeze 2>/dev/null | \
+			grep ipykernel | \
+			grep -qv "ipykernel==5\." && \
+		echo done
+	END
+	) == 'done' ]" $LINENO
 	SHELL_CMD_FLAGS="-e Djlab_JupyterServer_DisplayFilepath=/home/anaconda/README.md"
 	SHELL_CMD=$(eval "echo \"$SHELL_CMD_TEMPLATE\"")
-	assert "check landing page" "grep -q done <<< \
-		$($SHELL_CMD 'eval "$(cat)"' <<-END | tail -1
-			jupyter lab > /tmp/logs 2>&1 & \
-			sleep 1 && \
-			cat /tmp/logs | \
+	assert "check landing page" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+		jupyter lab > /tmp/logs 2>&1 & \
+		sleep 1 && \
+		cat /tmp/logs | \
 			grep -q "http://127.0.0.1:8888/lab/tree/anaconda/README.md" && \
-			echo done
-		END
-		)" $LINENO
-	assert "debugger available" "$SHELL_CMD \
-		'pip list --format=freeze 2>/dev/null | grep -qv "ipykernel==5\."'" $LINENO
+		echo done
+	END
+	) == 'done' ]" $LINENO
 	assert "get djlab default password with magic" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
 		ipython -c "%djlab djlab.jupyter_server.password"
 	END
