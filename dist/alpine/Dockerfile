@@ -52,13 +52,10 @@ USER anaconda:anaconda
 #Squashed Final Image
 FROM scratch
 COPY --from=jup_build / /
-# RUN chmod 4755 /startup && /startup -user=anaconda
 LABEL maintainerName="Raphael Guzman" \
 	maintainerEmail="raphael@datajoint.com" \
 	maintainerCompany="DataJoint"
 USER anaconda:anaconda
-# ENV PATH /opt/conda/bin:$PATH
-# ENV PATH "/home/dja/.local/bin:/opt/conda/bin:$PATH"
 ENV ENV "/home/anaconda/.ashrc"
 ENV HOME /home/anaconda
 ENV LANG C.UTF-8
