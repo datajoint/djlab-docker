@@ -27,6 +27,8 @@ Features
 ********
 
 - Adds a JupyterLab environment.
+- Includes Jupyter Lab debugger (py3.7+).
+- Defaults Markdown rendering to ``preview`` within JupyterLab.
 - Adds ``djlab`` magic: a mechanism for configuring and modifying Jupyter features w/o JupyterLab service interruption.
 - Applies image compression.
 

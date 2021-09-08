@@ -21,13 +21,14 @@ assert ()
 	fi
 }
 validate () {
-	assert "debugger available" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
-		pip list --format=freeze 2>/dev/null | \
-			grep ipykernel | \
-			grep -qv "ipykernel==5\." && \
-		echo done
-	END
-	) == 'done' ]" $LINENO
+	[ "$PY_VER" == "3.6" ] || \
+		assert "debugger available" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+			pip list --format=freeze 2>/dev/null | \
+				grep ipykernel | \
+				grep -qv "ipykernel==5\." && \
+			echo done
+		END
+		) == 'done' ]" $LINENO
 	SHELL_CMD_FLAGS="-e Djlab_JupyterServer_DisplayFilepath=/home/anaconda/README.md"
 	SHELL_CMD=$(eval "echo \"$SHELL_CMD_TEMPLATE\"")
 	assert "check landing page" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
