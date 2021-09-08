@@ -1,5 +1,0 @@
-djlab:
-  jupyter_notebook:
-    display_filepath: 'NULL'
-    password: 'datajoint'
-    save_output: 'FALSE'
