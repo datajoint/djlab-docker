@@ -1,48 +1,70 @@
 ARG BASE_IMAGE_HASH
 ARG PY_VER
-
 FROM datajoint/djbase:py${PY_VER}-debian-${BASE_IMAGE_HASH} as jup_build
-USER dja:anaconda
 
+LABEL maintainerName="Raphael Guzman" \
+	maintainerEmail="raphael@datajoint.com" \
+	maintainerCompany="DataJoint"
 ENV DJLAB_CONFIG /tmp/djlab_config.yaml
-COPY --chown=dja:anaconda ./dist/debian/apt_requirements.txt \
-    ./config/pip_requirements.txt ./config/djlab_config.yaml /tmp/
-COPY --chown=dja:anaconda ./utilities/djlab.py ./utilities/setup.py /main/
-COPY ./utilities/entrypoint.sh /entrypoint.sh
+COPY --chown=anaconda:anaconda ./dist/debian/apt_requirements.txt \
+	./config/pip_requirements.txt ./config/djlab_config.yaml /tmp/
+COPY --chown=anaconda:anaconda ./utilities/djlab.py ./utilities/setup.py /main/
 RUN \
-    umask u+rwx,g+rwx,o-rwx && \
-    export PY_VER=$(python -c "import sys;print(sys.version)" | \
-        head -1 | awk '{print $1}') && \
-    # conda install -yc conda-forge python=$PY_VER jupyterlab && \
-    /entrypoint.sh echo "Requirements updated..." && \
-    rm $APT_REQUIREMENTS && \
-    rm $PIP_REQUIREMENTS && \
-    pip install /main && \
-    rm /main/* && \
-    conda clean -ya && \
-    find /opt/conda/conda-meta -user dja -exec chmod u+rwx,g+rwx,o-rwx "{}" \; && \
-    chmod -R o+w /home/dja/.cache
-COPY --chown=dja:anaconda ./config/jupyter_notebook_config.py /etc/jupyter/
-COPY --chown=dja:anaconda ./config/ipython_config.py /etc/ipython/
+	umask u+rwx,g+rwx,o-rwx && \
+	# install jupyter
+	/entrypoint.sh "anaconda" "/home/anaconda" echo "Requirements updated..." && \
+	rm $APT_REQUIREMENTS && \
+	rm $PIP_REQUIREMENTS && \
+	# install djlab magic
+	pip install --no-cache-dir /main && \
+	# add markdown preview as default
+	DOC_MANGER_CONFIG=$(jq -r \
+		'.properties.defaultViewers.default = {"markdown":"Markdown Preview"}' \
+		$(echo "/opt/conda/share/jupyter/lab/schemas/@jupyterlab/docmanager-extension\
+			/plugin.json" | tr -d '\n' | tr -d '\t')) && \
+	echo "$DOC_MANGER_CONFIG" > \
+		$(echo "/opt/conda/share/jupyter/lab/schemas/@jupyterlab/docmanager-extension\
+			/plugin.json" | tr -d '\n' | tr -d '\t') && \
+	chmod u+rwx,g+rwx,o-rwx \
+		$(echo "/opt/conda/share/jupyter/lab/schemas/@jupyterlab/docmanager-extension\
+			/plugin.json" | tr -d '\n' | tr -d '\t') && \
+	# clean up
+	find /opt/conda/conda-meta -user anaconda -exec chmod u+rwx,g+rwx,o-rwx "{}" \; && \
+	rm /main/* && \
+	conda clean -ya
+COPY --chown=anaconda:anaconda ./config/jupyter_server_config.py /etc/jupyter/
+COPY --chown=anaconda:anaconda ./config/ipython_config.py /etc/ipython/
+# add add_entrypoint.sh to /entrypoint.sh
+COPY ./utilities/add_entrypoint.sh /tmp/add_entrypoint.sh
+USER root:anaconda
+RUN \
+	(cat /entrypoint.sh | \
+		tr '\n' '\r' | \
+		sed "s~#Run command\r\"\$@\"~~g" | \
+		tr '\r' '\n' && \
+		cat /tmp/add_entrypoint.sh) > /tmp/entrypoint.sh && \
+	mv /tmp/entrypoint.sh /entrypoint.sh && \
+	chmod +x /entrypoint.sh && \
+	rm /tmp/add_entrypoint.sh
+USER anaconda:anaconda
 
-# #Squashed Final Image
+
+#Squashed Final Image
 FROM scratch
 COPY --from=jup_build / /
-RUN chmod 4755 /startup && /startup -user=dja
 LABEL maintainerName="Raphael Guzman" \
-      maintainerEmail="raphael@vathes.com" \
-      maintainerCompany="DataJoint"
-USER dja:anaconda
-ENV HOME /home/dja
-ENV LANG C.UTF-8
+	maintainerEmail="raphael@datajoint.com" \
+	maintainerCompany="DataJoint"
+USER anaconda:anaconda
+ENV HOME /home/anaconda
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV APT_REQUIREMENTS /tmp/apt_requirements.txt
 ENV PIP_REQUIREMENTS /tmp/pip_requirements.txt
 ENV CONDA_REQUIREMENTS /tmp/conda_requirements.txt
 ENV DJLAB_CONFIG /tmp/djlab_config.yaml
-ENV PATH "/home/dja/.local/bin:/opt/conda/bin:$PATH"
-ENTRYPOINT ["/entrypoint.sh"]
-WORKDIR /home/dja
-VOLUME /home/dja
+ENTRYPOINT ["/entrypoint.sh", "anaconda", "/home/anaconda"]
+WORKDIR /home/anaconda
+VOLUME /home/anaconda
 VOLUME /tmp/.X11-unix
 EXPOSE 8888
 CMD ["jupyter", "lab"]
