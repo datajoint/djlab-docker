@@ -40,9 +40,11 @@ Usage Notes
 - To access a specific config use: ``%djlab [djlab config index]`` e.g. ``%djlab djlab.jupyter_server.save_output``.
 - To set a specific config use: ``%djlab [djlab config index] [value]`` e.g. ``%djlab djlab.jupyter_server.save_output TRUE``.
 - ``djlab`` magic supports the following configuration:
+
   - ``djlab.jupyter_server.display_filepath`` - (string, default: ``'NULL'``, env_var: ``Djlab_JupyterServer_DisplayFilepath``) Absolute filepath of file to show immediately after login.
   - ``djlab.jupyter_server.password`` - (string, default: ``'datajoint'``, env_var: ``Djlab_JupyterServer_Password``) Password to allow JupyterLab login.
   - ``djlab.jupyter_server.save_output`` - (string, default: ``'FALSE'``, env_var: ``Djlab_JupyterServer_SaveOutput``) Determine if output should be saved when saving noteboook.
+
 - To access ``djlab`` magic programatically, you may call into like so: ``print(__import__('djlab').get_djlab_config('djlab.jupyter_server'))``.
 
 Testing
