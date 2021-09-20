@@ -10,33 +10,53 @@ jobs:
         include:
           - distro: alpine
             py_ver: 3.9
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.8
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.7
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.6
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.9
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.8
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.7
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.6
+            platform: linux/amd64
+          # - distro: debian
+          #   py_ver: 3.9
+          #   platform: linux/arm64
+          # - distro: debian
+          #   py_ver: 3.8
+          #   platform: linux/arm64
+          # - distro: debian
+          #   py_ver: 3.7
+          #   platform: linux/arm64
     env:
       DISTRO: ${{matrix.distro}}
       PY_VER: ${{matrix.py_ver}}
-      PLATFORM: linux/amd64
+      PLATFORM: ${{matrix.platform}}
       DOCKER_CLIENT_TIMEOUT: "120"
       COMPOSE_HTTP_TIMEOUT: "120"
-      BASE_IMAGE_HASH: "534f4bc"
+      BASE_IMAGE_HASH: "5054080"
     steps:
       - uses: actions/checkout@v2
       - name: Determine platform tag
         run: |
           PLATFORM_TAG=$(echo "$PLATFORM" | tr '/' '_')
           echo "PLATFORM_TAG=${PLATFORM_TAG}" >> $GITHUB_ENV
+      - uses: dbhi/qus/action@main
+        with:
+          targets: aarch64
       - name: Compile image
         run: |
           docker buildx bake -f dist/${DISTRO}/docker-compose.yaml \
@@ -60,24 +80,41 @@ jobs:
         include:
           - distro: alpine
             py_ver: 3.9
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.8
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.7
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.6
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.9
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.8
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.7
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.6
+            platform: linux/amd64
+          # - distro: debian
+          #   py_ver: 3.9
+          #   platform: linux/arm64
+          # - distro: debian
+          #   py_ver: 3.8
+          #   platform: linux/arm64
+          # - distro: debian
+          #   py_ver: 3.7
+          #   platform: linux/arm64
     env:
       DISTRO: ${{matrix.distro}}
       PY_VER: ${{matrix.py_ver}}
-      PLATFORM: linux/amd64
+      PLATFORM: ${{matrix.platform}}
     steps:
       - uses: actions/checkout@v2
       - name: Determine platform tag
@@ -88,6 +125,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{format('py{0}-{1}-{2}', matrix.py_ver, matrix.distro, env.PLATFORM_TAG)}}
+      - uses: dbhi/qus/action@main
+        with:
+          targets: aarch64
       - name: Run integration tests
         run: |
           docker load < "py${PY_VER}-${DISTRO}-${PLATFORM_TAG}.tar.gz"
@@ -101,24 +141,41 @@ jobs:
         include:
           - distro: alpine
             py_ver: 3.9
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.8
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.7
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.6
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.9
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.8
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.7
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.6
+            platform: linux/amd64
+          # - distro: debian
+          #   py_ver: 3.9
+          #   platform: linux/arm64
+          # - distro: debian
+          #   py_ver: 3.8
+          #   platform: linux/arm64
+          # - distro: debian
+          #   py_ver: 3.7
+          #   platform: linux/arm64
     env:
       DISTRO: ${{matrix.distro}}
       PY_VER: ${{matrix.py_ver}}
-      PLATFORM: linux/amd64
+      PLATFORM: ${{matrix.platform}}
       DOCKER_USERNAME: ${{secrets.docker_username}}
       DOCKER_PASSWORD: ${{secrets.docker_password}}
     steps:
@@ -150,7 +207,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Build docs
         uses: ammaraskar/sphinx-action@master
         with:
