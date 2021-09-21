@@ -40,7 +40,7 @@ USER root:anaconda
 RUN \
 	(cat /entrypoint.sh | \
 		tr '\n' '\r' | \
-		sed "s~# Run command\r\"\$@\"~~g" | \
+		sed "s~# Run command\r.*\r\"\$@\"~~g" | \
 		tr '\r' '\n' && \
 		cat /tmp/add_entrypoint.sh) > /tmp/entrypoint.sh && \
 	mv /tmp/entrypoint.sh /entrypoint.sh && \
@@ -57,6 +57,8 @@ LABEL maintainerName="Raphael Guzman" \
 	maintainerCompany="DataJoint"
 USER anaconda:anaconda
 ENV ENV "/home/anaconda/.ashrc"
+# Add conda to path here for use in downstream dockerfiles
+ENV PATH /opt/conda/bin:$PATH
 ENV HOME /home/anaconda
 ENV LANG C.UTF-8
 ENV APK_REQUIREMENTS /tmp/apk_requirements.txt
