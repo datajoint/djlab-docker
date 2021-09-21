@@ -1,4 +1,4 @@
-#Update djlab config based on env vars
+# Update djlab config based on env vars
 CURR_CONFIG=$(yq -Y "." "${DJLAB_CONFIG}")
 for line in $(env | grep Djlab | sort); do
 	KEY="$(echo $line | cut -d'=' -f1)"
@@ -8,6 +8,6 @@ for line in $(env | grep Djlab | sort); do
 	CURR_CONFIG="$(echo "${CURR_CONFIG}" | yq -Y ". | .${KEY} = \"${VALUE}\"")"
 done
 echo "${CURR_CONFIG}" > "${DJLAB_CONFIG}"
-
-#Run command
+# Run command
+[ "$(pwd)" != "/home/anaconda" ] || cd ~
 "$@"
