@@ -9,5 +9,4 @@ for line in $(env | grep Djlab | sort); do
 done
 echo "${CURR_CONFIG}" > "${DJLAB_CONFIG}"
 # Run command
-[ "$(pwd)" != "/home/anaconda" ] || cd ~
 "$@"

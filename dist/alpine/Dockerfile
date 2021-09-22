@@ -40,7 +40,7 @@ USER root:anaconda
 RUN \
 	(cat /entrypoint.sh | \
 		tr '\n' '\r' | \
-		sed "s~# Run command\r.*\r\"\$@\"~~g" | \
+		sed "s~# Run command\r\"\$@\"~~g" | \
 		tr '\r' '\n' && \
 		cat /tmp/add_entrypoint.sh) > /tmp/entrypoint.sh && \
 	mv /tmp/entrypoint.sh /entrypoint.sh && \
