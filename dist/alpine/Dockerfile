@@ -67,7 +67,6 @@ ENV CONDA_REQUIREMENTS /tmp/conda_requirements.txt
 ENV DJLAB_CONFIG /tmp/djlab_config.yaml
 ENTRYPOINT ["/entrypoint.sh"]
 WORKDIR /home/anaconda
-VOLUME /home/anaconda
 VOLUME /tmp/.X11-unix
 EXPOSE 8888
 CMD ["jupyter", "lab"]
