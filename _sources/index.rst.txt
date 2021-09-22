@@ -63,4 +63,4 @@ To rebuild and run tests locally, execute the following statements:
 Base Image
 **********
 
-Build is a child of `datajoint/djbase <https://github.com/datajoint/djbase-docker>`_.
+Build is a child of `datajoint/djbase <https://datajoint.github.io/djbase-docker/>`_.
