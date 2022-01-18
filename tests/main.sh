@@ -49,6 +49,10 @@ validate () {
 		ipython -c "%djlab djlab.jupyter_server.password"
 	END
 	) == 'test' ]" $LINENO
+	assert "check djlab_config.yaml permission" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+		ls -la /tmp/djlab_config.yaml | cut -d ' ' -f1 | tr -d '\n'
+	END
+	) == '-rw-rw-r--' ]" $LINENO
 }
 # set image context
 REF=$(eval \
