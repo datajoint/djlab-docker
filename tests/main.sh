@@ -49,6 +49,10 @@ validate () {
 		ipython -c "%djlab djlab.jupyter_server.password"
 	END
 	) == 'test' ]" $LINENO
+	assert "check djlab_config permissions" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+		ls -la /tmp/djlab_config.yaml | cut -d ' ' -f1 | tr -d '\n'
+	END
+	) == '-rw-rw-r--' ]" $LINENO
 }
 # set image context
 REF=$(eval \
@@ -58,7 +62,9 @@ IMAGE=$(echo $REF | awk -F':' '{print $1}')
 SHELL_CMD_TEMPLATE="docker run --rm -i \$SHELL_CMD_FLAGS $REF \
 	$([ ${DISTRO} == 'debian' ] && echo bash || echo sh) -c"
 # determine reference size
-if [ $DISTRO == alpine ] && [ $PY_VER == '3.9' ] && [ $PLATFORM == 'linux/amd64' ]; then
+if [ $DISTRO == alpine ] && [ $PY_VER == '3.10' ] && [ $PLATFORM == 'linux/amd64' ]; then
+	SIZE_LIMIT=671
+elif [ $DISTRO == alpine ] && [ $PY_VER == '3.9' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=623
 elif [ $DISTRO == alpine ] && [ $PY_VER == '3.8' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=581  # 657
@@ -66,6 +72,8 @@ elif [ $DISTRO == alpine ] && [ $PY_VER == '3.7' ] && [ $PLATFORM == 'linux/amd6
 	SIZE_LIMIT=590  # 648
 elif [ $DISTRO == alpine ] && [ $PY_VER == '3.6' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=503  # 648
+elif [ $DISTRO == debian ] && [ $PY_VER == '3.10' ] && [ $PLATFORM == 'linux/amd64' ]; then
+	SIZE_LIMIT=809
 elif [ $DISTRO == debian ] && [ $PY_VER == '3.9' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=743
 elif [ $DISTRO == debian ] && [ $PY_VER == '3.8' ] && [ $PLATFORM == 'linux/amd64' ]; then
