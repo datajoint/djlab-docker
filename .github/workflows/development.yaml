@@ -20,9 +20,6 @@ jobs:
           - distro: alpine
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: alpine
-          #   py_ver: 3.6
-          #   platform: linux/amd64
           # - distro: debian
           #   py_ver: '3.10'
           #   platform: linux/amd64
@@ -35,9 +32,6 @@ jobs:
           - distro: debian
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: debian
-          #   py_ver: 3.6
-          #   platform: linux/amd64
           # - distro: debian
           #   py_ver: 3.9
           #   platform: linux/arm64
@@ -96,9 +90,6 @@ jobs:
           - distro: alpine
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: alpine
-          #   py_ver: 3.6
-          #   platform: linux/amd64
           # - distro: debian
           #   py_ver: '3.10'
           #   platform: linux/amd64
@@ -111,9 +102,6 @@ jobs:
           - distro: debian
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: debian
-          #   py_ver: 3.6
-          #   platform: linux/amd64
           # - distro: debian
           #   py_ver: 3.9
           #   platform: linux/arm64
@@ -163,9 +151,6 @@ jobs:
           - distro: alpine
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: alpine
-          #   py_ver: 3.6
-          #   platform: linux/amd64
           # - distro: debian
           #   py_ver: '3.10'
           #   platform: linux/amd64
@@ -178,9 +163,6 @@ jobs:
           - distro: debian
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: debian
-          #   py_ver: 3.6
-          #   platform: linux/amd64
           # - distro: debian
           #   py_ver: 3.9
           #   platform: linux/arm64
