@@ -1,7 +1,9 @@
 # Configuration file for jupyter server.
+import hashlib
+import random
+
 from os import getenv, getuid
 from pwd import getpwall
-from IPython.lib import passwd
 from traitlets.config import Config
 from djlab import get_djlab_config
 
@@ -9,8 +11,13 @@ user = [u for u in getpwall() if u.pw_uid == getuid()][0]
 c = Config() if 'c' not in locals() else c
 
 # The password to use i.e. "datajoint".
-c.ServerApp.password = passwd(get_djlab_config(
-    'djlab.jupyter_server.password')).encode('utf-8')
+salt_len = 12
+h = hashlib.new('sha1')
+salt = ('%0' + str(salt_len) + 'x') % random.getrandbits(4 * salt_len)
+h.update(get_djlab_config(
+    'djlab.jupyter_server.password').encode('utf-8') + salt.encode('ascii'))
+
+c.ServerApp.password = ':'.join(('sha1', salt, h.hexdigest()))
 
 # Allow root access.
 c.ServerApp.allow_root = False
