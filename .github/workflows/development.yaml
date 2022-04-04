@@ -133,7 +133,13 @@ jobs:
           docker load < "py${PY_VER}-${DISTRO}-${PLATFORM_TAG}.tar.gz"
           tests/main.sh
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/master' &&
+      (
+        github.repository_owner == 'datajoint' ||
+        github.repository_owner == 'datajoint-company'
+      )
     needs: test
     runs-on: ubuntu-latest
     strategy:
@@ -204,7 +210,13 @@ jobs:
                   && docker push "${IMAGE}:latest" \
               || echo "skipping 'latest' tag..."
   publish-docs:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/master' &&
+      (
+        github.repository_owner == 'datajoint' ||
+        github.repository_owner == 'datajoint-company'
+      )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

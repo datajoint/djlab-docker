@@ -11,7 +11,7 @@ COPY --chown=anaconda:anaconda ./dist/debian/apt_requirements.txt \
 COPY --chown=anaconda:anaconda ./utilities/djlab.py ./utilities/setup.py /main/
 RUN \
 	umask u+rwx,g+rwx,o-rwx && \
-	chmod 664 /tmp/djlab_config.yaml && \
+	chmod u=rw,g=rw,o=r /tmp/djlab_config.yaml && \
 	# Install jupyter
 	/entrypoint.sh echo "Requirements updated..." && \
 	rm $APT_REQUIREMENTS && \
