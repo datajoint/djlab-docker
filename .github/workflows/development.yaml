@@ -8,9 +8,9 @@ jobs:
     strategy:
       matrix:
         include:
-          # - distro: alpine
-          #   py_ver: '3.10'
-          #   platform: linux/amd64
+          - distro: alpine
+            py_ver: '3.10'
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.9
             platform: linux/amd64
@@ -20,9 +20,9 @@ jobs:
           - distro: alpine
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: debian
-          #   py_ver: '3.10'
-          #   platform: linux/amd64
+          - distro: debian
+            py_ver: '3.10'
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.9
             platform: linux/amd64
@@ -47,7 +47,7 @@ jobs:
       PLATFORM: ${{matrix.platform}}
       DOCKER_CLIENT_TIMEOUT: "120"
       COMPOSE_HTTP_TIMEOUT: "120"
-      BASE_IMAGE_HASH: "1d777f4"
+      BASE_IMAGE_HASH: "8eb1715"
     steps:
       - uses: actions/checkout@v2
       - name: Determine platform tag
@@ -78,9 +78,9 @@ jobs:
     strategy:
       matrix:
         include:
-          # - distro: alpine
-          #   py_ver: '3.10'
-          #   platform: linux/amd64
+          - distro: alpine
+            py_ver: '3.10'
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.9
             platform: linux/amd64
@@ -90,9 +90,9 @@ jobs:
           - distro: alpine
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: debian
-          #   py_ver: '3.10'
-          #   platform: linux/amd64
+          - distro: debian
+            py_ver: '3.10'
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.9
             platform: linux/amd64
@@ -139,9 +139,9 @@ jobs:
     strategy:
       matrix:
         include:
-          # - distro: alpine
-          #   py_ver: '3.10'
-          #   platform: linux/amd64
+          - distro: alpine
+            py_ver: '3.10'
+            platform: linux/amd64
           - distro: alpine
             py_ver: 3.9
             platform: linux/amd64
@@ -151,9 +151,9 @@ jobs:
           - distro: alpine
             py_ver: 3.7
             platform: linux/amd64
-          # - distro: debian
-          #   py_ver: '3.10'
-          #   platform: linux/amd64
+          - distro: debian
+            py_ver: '3.10'
+            platform: linux/amd64
           - distro: debian
             py_ver: 3.9
             platform: linux/amd64
