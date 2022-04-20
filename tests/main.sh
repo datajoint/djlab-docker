@@ -21,14 +21,13 @@ assert ()
 	fi
 }
 validate () {
-	[ "$PY_VER" == "3.6" ] || \
-		assert "debugger available" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
-			pip list --format=freeze 2>/dev/null | \
-				grep ipykernel | \
-				grep -qv "ipykernel==5\." && \
-			echo done
-		END
-		) == 'done' ]" $LINENO
+	assert "debugger available" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+		pip list --format=freeze 2>/dev/null | \
+			grep ipykernel | \
+			grep -qv "ipykernel==5\." && \
+		echo done
+	END
+	) == 'done' ]" $LINENO
 	SHELL_CMD_FLAGS="-e Djlab_JupyterServer_DisplayFilepath=/home/anaconda/README.md"
 	SHELL_CMD=$(eval "echo \"$SHELL_CMD_TEMPLATE\"")
 	assert "check landing page" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
@@ -49,7 +48,7 @@ validate () {
 		ipython -c "%djlab djlab.jupyter_server.password"
 	END
 	) == 'test' ]" $LINENO
-	assert "check djlab_config.yaml permission" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
+	assert "check djlab_config permissions" "[ $($SHELL_CMD 'eval "$(cat)"' <<-END
 		ls -la /tmp/djlab_config.yaml | cut -d ' ' -f1 | tr -d '\n'
 	END
 	) == '-rw-rw-r--' ]" $LINENO
@@ -62,22 +61,22 @@ IMAGE=$(echo $REF | awk -F':' '{print $1}')
 SHELL_CMD_TEMPLATE="docker run --rm -i \$SHELL_CMD_FLAGS $REF \
 	$([ ${DISTRO} == 'debian' ] && echo bash || echo sh) -c"
 # determine reference size
-if [ $DISTRO == alpine ] && [ $PY_VER == '3.9' ] && [ $PLATFORM == 'linux/amd64' ]; then
+if [ $DISTRO == alpine ] && [ $PY_VER == '3.10' ] && [ $PLATFORM == 'linux/amd64' ]; then
+	SIZE_LIMIT=671
+elif [ $DISTRO == alpine ] && [ $PY_VER == '3.9' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=623
 elif [ $DISTRO == alpine ] && [ $PY_VER == '3.8' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=581  # 657
 elif [ $DISTRO == alpine ] && [ $PY_VER == '3.7' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=590  # 648
-elif [ $DISTRO == alpine ] && [ $PY_VER == '3.6' ] && [ $PLATFORM == 'linux/amd64' ]; then
-	SIZE_LIMIT=503  # 648
+elif [ $DISTRO == debian ] && [ $PY_VER == '3.10' ] && [ $PLATFORM == 'linux/amd64' ]; then
+	SIZE_LIMIT=809
 elif [ $DISTRO == debian ] && [ $PY_VER == '3.9' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=743
 elif [ $DISTRO == debian ] && [ $PY_VER == '3.8' ] && [ $PLATFORM == 'linux/amd64' ]; then
-	SIZE_LIMIT=697  # 890
+	SIZE_LIMIT=733  # 890
 elif [ $DISTRO == debian ] && [ $PY_VER == '3.7' ] && [ $PLATFORM == 'linux/amd64' ]; then
 	SIZE_LIMIT=701  # 880
-elif [ $DISTRO == debian ] && [ $PY_VER == '3.6' ] && [ $PLATFORM == 'linux/amd64' ]; then
-	SIZE_LIMIT=614  # 880
 fi
 SIZE_LIMIT=$(echo "scale=4; $SIZE_LIMIT * 1.05" | bc)
 # verify size minimal

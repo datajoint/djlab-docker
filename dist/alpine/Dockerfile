@@ -11,8 +11,7 @@ COPY --chown=anaconda:anaconda ./dist/alpine/apk_requirements.txt \
 COPY --chown=anaconda:anaconda ./utilities/djlab.py ./utilities/setup.py /main/
 RUN \
 	umask u+rwx,g+rwx,o-rwx && \
-	# Update file permission from above COPY
-	chmod 664 /tmp/djlab_config.yaml && \
+	chmod u=rw,g=rw,o=r /tmp/djlab_config.yaml && \
 	# Install jupyter
 	/entrypoint.sh echo "Requirements updated..." && \
 	rm $APK_REQUIREMENTS && \
@@ -32,7 +31,7 @@ RUN \
 			/plugin.json" | tr -d '\n' | tr -d '\t') && \
 	# Clean up
 	find /opt/conda/conda-meta -user anaconda -exec chmod u+rwx,g+rwx,o-rwx "{}" \; && \
-	rm /main/* && \
+	rm -r /main/* && \
 	conda clean -ya
 COPY --chown=anaconda:anaconda ./config/jupyter_server_config.py /etc/jupyter/
 COPY --chown=anaconda:anaconda ./config/ipython_config.py /etc/ipython/
