@@ -18,6 +18,8 @@ RUN \
 	rm $PIP_REQUIREMENTS && \
 	# Install djlab magic
 	pip install --no-cache-dir /main && \
+	# Install jupyter widgets
+	conda install -y -n base -c conda-forge jupyterlab_widgets ipywidgets "nodejs>=18" && \
 	# Add markdown preview as default
 	DOC_MANGER_CONFIG=$(jq -r \
 		'.properties.defaultViewers.default = {"markdown":"Markdown Preview"}' \
